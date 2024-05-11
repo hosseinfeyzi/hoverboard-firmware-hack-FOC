@@ -80,6 +80,8 @@ static int16_t offsetdcr    = 2000;
 
 int16_t        batVoltage       = (400 * BAT_CELLS * BAT_CALIB_ADC) / BAT_CALIB_REAL_VOLTAGE;
 static int32_t batVoltageFixdt  = (400 * BAT_CELLS * BAT_CALIB_ADC) / BAT_CALIB_REAL_VOLTAGE << 16;  // Fixed-point filter output initialized at 400 V*100/cell = 4 V/cell converted to fixed-point
+extern int motAngleLeft ;
+extern int motAngleRight;
 
 // =================================
 // DMA interrupt frequency =~ 16 kHz
@@ -198,7 +200,7 @@ void DMA1_Channel1_IRQHandler(void) {
     wl            = rtY_Left.DC_phaC;
   // errCodeLeft  = rtY_Left.z_errCode;
   // motSpeedLeft = rtY_Left.n_mot;
-  // motAngleLeft = rtY_Left.a_elecAngle;
+		motAngleLeft = rtY_Left.a_elecAngle;
 
     /* Apply commands */
     LEFT_TIM->LEFT_TIM_U    = (uint16_t)CLAMP(ul + pwm_res / 2, pwm_margin, pwm_res-pwm_margin);
@@ -236,7 +238,7 @@ void DMA1_Channel1_IRQHandler(void) {
     wr            = rtY_Right.DC_phaC;
  // errCodeRight  = rtY_Right.z_errCode;
  // motSpeedRight = rtY_Right.n_mot;
- // motAngleRight = rtY_Right.a_elecAngle;
+		motAngleRight = rtY_Right.a_elecAngle;
 
     /* Apply commands */
     RIGHT_TIM->RIGHT_TIM_U  = (uint16_t)CLAMP(ur + pwm_res / 2, pwm_margin, pwm_res-pwm_margin);
