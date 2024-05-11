@@ -111,7 +111,11 @@ int16_t left_dc_curr;            // global variable for Left DC Link current
 int16_t right_dc_curr;           // global variable for Right DC Link current
 int16_t dc_curr;                 // global variable for Total DC Link current 
 int16_t cmdL;                    // global variable for Left Command 
-int16_t cmdR;                    // global variable for Right Command 
+int16_t cmdR;                    // global variable for Right Command
+int motAngleLeft = 0;
+int motAngleRight = 0;
+int MotorPosL = 0;
+int MotorPosR = 0;
 
 //------------------------------------------------------------------------
 // Local variables
@@ -238,7 +242,7 @@ int main(void) {
   #endif
 
   // Loop until button is released
-  while(HAL_GPIO_ReadPin(BUTTON_PORT, BUTTON_PIN)) { HAL_Delay(10); }
+  //while(HAL_GPIO_ReadPin(BUTTON_PORT, BUTTON_PIN)) { HAL_Delay(10); }
 
   #ifdef MULTI_MODE_DRIVE
     // Wait until triggers are released. Exit if timeout elapses (to unblock if the inputs are not calibrated)
@@ -493,11 +497,11 @@ int main(void) {
         #if defined(DEBUG_SERIAL_PROTOCOL)
           process_debug();
         #else
-          printf("in1:%i in2:%i cmdL:%i cmdR:%i BatADC:%i BatV:%i TempADC:%i Temp:%i \r\n",
+          printf("in1:%i in2:%i ANG-L:%i ANG-R:%i BatADC:%i BatV:%i TempADC:%i Temp:%i \r\n",
             input1[inIdx].raw,        // 1: INPUT1
             input2[inIdx].raw,        // 2: INPUT2
-            cmdL,                     // 3: output command: [-1000, 1000]
-            cmdR,                     // 4: output command: [-1000, 1000]
+            motAngleLeft,             // 3: output command: [-1000, 1000]
+            motAngleRight,            // 4: output command: [-1000, 1000]
             adc_buffer.batt1,         // 5: for battery voltage calibration
             batVoltageCalib,          // 6: for verifying battery voltage calibration
             board_temp_adcFilt,       // 7: for board temperature calibration
@@ -539,7 +543,7 @@ int main(void) {
     #endif
 
     // ####### POWEROFF BY POWER-BUTTON #######
-    poweroffPressCheck();
+    //poweroffPressCheck();
 
     // ####### BEEP AND EMERGENCY POWEROFF #######
     if (TEMP_POWEROFF_ENABLE && board_temp_deg_c >= TEMP_POWEROFF && speedAvgAbs < 20){  // poweroff before mainboard burns OR low bat 3
@@ -594,7 +598,7 @@ int main(void) {
       #if defined(DEBUG_SERIAL_USART2) || defined(DEBUG_SERIAL_USART3)
         printf("Powering off, wheels were inactive for too long\r\n");
       #endif
-      poweroff();
+      //poweroff();
     }
 
 
